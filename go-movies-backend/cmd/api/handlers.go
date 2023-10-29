@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// Home is the home page handler
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 	var payload = struct {
 		Status  string `json:"status"`
@@ -29,6 +30,7 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 }
 
+// AllMovies returns all movies
 func (app *application) AllMovies(w http.ResponseWriter, r *http.Request) {
 	var movies []models.Movie
 
