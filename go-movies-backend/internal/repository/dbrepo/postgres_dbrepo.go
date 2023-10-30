@@ -39,9 +39,11 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 
 	var movies []*models.Movie
 
+	// Iterate through the rows of the result set.
 	for rows.Next() {
 		var movie models.Movie
 
+		// Scan the values from the row into the 'movie' struct.
 		err := rows.Scan(
 			&movie.ID,
 			&movie.Title,
