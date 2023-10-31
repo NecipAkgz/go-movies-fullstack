@@ -9,6 +9,7 @@ export default function Login() {
   const { setJwtToken } = useOutletContext()
   const { setAlertClassname } = useOutletContext()
   const { setAlertMessage } = useOutletContext()
+  const { toggleRefresh } = useOutletContext()
 
   const navigate = useNavigate()
 
@@ -32,6 +33,7 @@ export default function Login() {
         } else {
           setJwtToken(response.data.access_token)
           setAlertClassname('d-none')
+          toggleRefresh(true)
           setAlertMessage('')
           navigate('/')
         }

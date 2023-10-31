@@ -28,6 +28,7 @@ func main() {
 	var app application
 
 	// read from command line
+	// Flag package is used to read the values we assign as initial values.
 	flag.StringVar(&app.DSN, "dsn", "host=localhost port=5432 user=postgres password=postgres dbname=movies sslmode=disable timezone=UTC connect_timeout=5", "Postgres connection string")
 	flag.StringVar(&app.JWTSecret, "jwt-secret", "verysecret", "secret key")
 	flag.StringVar(&app.JWTIssuer, "jwt-issuer", "example.com", "issuer key")

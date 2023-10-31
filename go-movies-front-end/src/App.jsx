@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Alert from './components/Alert'
 
@@ -8,12 +8,48 @@ export default function App() {
   const [alertMessage, setAlertMessage] = useState('')
   const [alertClassname, setAlertClassname] = useState('')
 
+  const [tickInterval, setTickInterval] = useState()
+
   const navigate = useNavigate()
 
   const logOut = () => {
-    setJwtToken('')
-    navigate('/login')
+    axios
+      .get('api/logout', {
+        withCredentials: true,
+      })
+      .catch((error) => console.log('error logging out', error))
+      .finally(() => {
+        setJwtToken('')
+        toggleRefresh(false)
+        navigate('/login')
+      })
   }
+
+  const toggleRefresh = useCallback(
+    (status) => {
+      if (status) {
+        let i = setInterval(() => {
+          axios
+            .get(`api/refresh`, {
+              withCredentials: true,
+            })
+            .then((response) => {
+              if (response.data.access_token) {
+                setJwtToken(response.data.access_token)
+              }
+            })
+            .catch((error) => {
+              console.log('user is not logged in')
+            })
+        }, 600000)
+        setTickInterval(i)
+      } else {
+        setTickInterval(null)
+        clearInterval(tickInterval)
+      }
+    },
+    [tickInterval]
+  )
 
   useEffect(() => {
     if (jwtToken === '') {
@@ -24,13 +60,14 @@ export default function App() {
         .then((response) => {
           if (response.data.access_token) {
             setJwtToken(response.data.access_token)
+            toggleRefresh(true)
           }
         })
         .catch((error) => {
           console.log('user is not logged in')
         })
     }
-  }, [jwtToken])
+  }, [jwtToken, toggleRefresh])
 
   return (
     <div className='container'>
@@ -101,6 +138,7 @@ export default function App() {
               setJwtToken,
               setAlertClassname,
               setAlertMessage,
+              toggleRefresh,
             }}
           />
         </div>
