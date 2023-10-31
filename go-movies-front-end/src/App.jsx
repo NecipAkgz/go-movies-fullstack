@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Alert from './components/Alert'
 
@@ -13,6 +14,23 @@ export default function App() {
     setJwtToken('')
     navigate('/login')
   }
+
+  useEffect(() => {
+    if (jwtToken === '') {
+      axios
+        .get(`api/refresh`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          if (response.data.access_token) {
+            setJwtToken(response.data.access_token)
+          }
+        })
+        .catch((error) => {
+          console.log('user is not logged in')
+        })
+    }
+  }, [jwtToken])
 
   return (
     <div className='container'>

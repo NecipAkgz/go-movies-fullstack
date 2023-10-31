@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -5,19 +6,9 @@ export default function Movies() {
   const [movies, setMovies] = useState([])
 
   useEffect(() => {
-    const headers = new Headers()
-    headers.append('Content-Type', 'application/json')
-
-    const requestOptions = {
-      method: 'GET',
-      headers: headers,
-    }
-
-    fetch(`http://localhost:8000/movies`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        setMovies(data)
-      })
+    axios
+      .get(`api/movies`)
+      .then((response) => setMovies(response.data))
       .catch((error) => console.error(error))
   }, [])
 

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import Input from './form/input'
@@ -13,17 +14,32 @@ export default function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log(email)
 
-    if (email === 'admin@example.com') {
-      setJwtToken('asdasd')
-      setAlertClassname('')
-      setAlertMessage('')
-      navigate('/')
-    } else {
-      setAlertClassname('alert-danger')
-      setAlertMessage('Invalid credentials')
+    // build the request payload
+    let payload = {
+      email: email,
+      password: password,
     }
+
+    axios
+      .post(`api/authenticate`, payload, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.data.error) {
+          setAlertClassname('alert-danger')
+          setAlertMessage(response.data.message)
+        } else {
+          setJwtToken(response.data.access_token)
+          setAlertClassname('d-none')
+          setAlertMessage('')
+          navigate('/')
+        }
+      })
+      .catch((error) => {
+        setAlertMessage('alert-danger')
+        setAlertMessage(error)
+      })
   }
   return (
     <div className='col-md-6 offset-md-3'>

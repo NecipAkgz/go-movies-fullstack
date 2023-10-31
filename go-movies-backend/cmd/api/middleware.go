@@ -1,19 +1,18 @@
 package main
 
-import "net/http"
+import (
+	"github.com/rs/cors"
+	"net/http"
+)
 
 // enableCORS enables CORS for all requests
 func (app *application) enableCORS(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-
-		if r.Method == "OPTIONS" {
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
-			w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, X-CSRF-Token, Authorization")
-			return
-		} else {
-			h.ServeHTTP(w, r)
-		}
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Content-Type", "X-CSRF-Token", "Authorization", "Set-Cookie"},
+		AllowCredentials: true,
 	})
+	return c.Handler(h)
+
 }
