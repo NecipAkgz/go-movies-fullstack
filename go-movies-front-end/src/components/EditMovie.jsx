@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import { Select } from '../components/form/Select'
 import { Checkbox } from './form/Checkbox'
 import { TextArea } from './form/TextArea'
@@ -54,7 +55,7 @@ export default function EditMovie() {
       setMovie({
         id: 0,
         title: '',
-        relase_date: '',
+        release_date: '',
         runtime: '',
         mpaa_rating: '',
         descripton: '',
@@ -83,6 +84,37 @@ export default function EditMovie() {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+
+    let errors = []
+    let required = [
+      { field: movie.title, name: 'title' },
+      { field: movie.release_date, name: 'release_date' },
+      { field: movie.runtime, name: 'runtime' },
+      { field: movie.descripton, name: 'description' },
+      { field: movie.mpaa_rating, name: 'mpaa_rating' },
+    ]
+
+    required.forEach((obj) => {
+      if (obj.field === '') {
+        errors.push(obj.name)
+      }
+    })
+
+    if (movie.genres_array.length === 0) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Please select at least one genre',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      })
+      errors.push('genres_array')
+    }
+
+    setErrors(errors)
+
+    if (errors.length > 0) {
+      return false
+    }
   }
 
   const handleChange = (fieldName) => (event) => {
@@ -91,17 +123,24 @@ export default function EditMovie() {
   }
 
   const handleCheck = (event, position) => {
-    console.log('handle check called')
-    console.log('value in handle Check: ', event.target.value)
-    console.log('checked is ', event.target.checked)
-    console.log('position is ', position)
+    let tempArr = movie.genres
+    tempArr[position].checked = !tempArr[position].checked
+
+    let tempIDs = movie.genres_array
+    if (!event.target.checked) {
+      tempIDs.splice(tempIDs.indexOf(event.target.value))
+    } else {
+      tempIDs.push(parseInt(event.target.value, 10))
+    }
+
+    setMovie({ ...movie, genres_array: tempIDs })
   }
 
   return (
     <div>
       <h2>EditMovie</h2>
       <hr />
-      <pre>{JSON.stringify(movie, null, 3)}</pre>
+      {/* <pre>{JSON.stringify(movie, null, 3)}</pre> */}
 
       <form onSubmit={handleSubmit}>
         <input type='hidden' name='id' value={movie.id} />
@@ -178,6 +217,10 @@ export default function EditMovie() {
             ))}
           </>
         )}
+
+        <hr />
+
+        <button className='btn btn-primary'>Save</button>
       </form>
     </div>
   )
