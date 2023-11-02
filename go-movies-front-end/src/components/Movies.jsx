@@ -7,7 +7,7 @@ export default function Movies() {
 
   useEffect(() => {
     axios
-      .get(`api/movies`)
+      .get(`/api/movies`)
       .then((response) => setMovies(response.data))
       .catch((error) => console.error(error))
   }, [])

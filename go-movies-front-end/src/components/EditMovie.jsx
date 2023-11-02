@@ -1,6 +1,8 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { Select } from '../components/form/Select'
+import { Checkbox } from './form/Checkbox'
 import { TextArea } from './form/TextArea'
 import Input from './form/input'
 
@@ -31,17 +33,53 @@ export default function EditMovie() {
     runtime: '',
     mpaa_rating: '',
     descripton: '',
+    genres: [],
+    genres_array: [Array(13).fill(false)],
   })
 
   // get id from the URL
   let { id } = useParams()
+  if (id === undefined) {
+    id = 0
+  }
 
   useEffect(() => {
     if (jwtToken === '') {
       navigate('/login')
       return
     }
-  }, [jwtToken, navigate])
+
+    if (id === 0) {
+      // adding a movie
+      setMovie({
+        id: 0,
+        title: '',
+        relase_date: '',
+        runtime: '',
+        mpaa_rating: '',
+        descripton: '',
+        genres: [],
+        genres_array: [Array(13).fill(false)],
+      })
+      axios
+        .get(`/api/genres`)
+        .then(({ data }) => {
+          const checks = []
+          data.forEach((g) => {
+            checks.push({ id: g.id, checked: false, genre: g.genre })
+          })
+
+          setMovie((m) => ({
+            ...m,
+            genres: checks,
+            genres_array: [],
+          }))
+        })
+        .catch((err) => console.log(err))
+    } else {
+      // editing an existing movie
+    }
+  }, [id, jwtToken, navigate])
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -50,6 +88,13 @@ export default function EditMovie() {
   const handleChange = (fieldName) => (event) => {
     let { name, value } = event.target
     setMovie({ ...movie, [name]: value })
+  }
+
+  const handleCheck = (event, position) => {
+    console.log('handle check called')
+    console.log('value in handle Check: ', event.target.value)
+    console.log('checked is ', event.target.checked)
+    console.log('position is ', position)
   }
 
   return (
@@ -117,6 +162,22 @@ export default function EditMovie() {
         <hr />
 
         <h3>Genres</h3>
+
+        {movie.genres && movie.genres.length > 1 && (
+          <>
+            {movie.genres.map((g, index) => (
+              <Checkbox
+                key={index}
+                id={'genre-' + index}
+                title={g.genre}
+                name={'genre'}
+                onChange={(event) => handleCheck(event, index)}
+                value={g.id}
+                checked={movie.genres[index].checked}
+              />
+            ))}
+          </>
+        )}
       </form>
     </div>
   )
