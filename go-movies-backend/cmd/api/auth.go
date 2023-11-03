@@ -40,19 +40,15 @@ type Claims struct {
 // GenerateTokenPair generates a new token pair for a user
 func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 	// Create a token
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	// Set the claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
-	claims["sub"] = fmt.Sprint(user.ID)
-	claims["aud"] = j.Audience
-	claims["iss"] = j.Issuer
-	claims["iat"] = time.Now().UTC().Unix()
-	claims["typ"] = "JWT"
-
-	// Set the expiry for the JWT
-	claims["exp"] = time.Now().UTC().Add(j.TokenExpiry).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"name": fmt.Sprintf("%s %s", user.FirstName, user.LastName),
+		"sub":  user.ID,
+		"aud":  j.Audience,
+		"iss":  j.Issuer,
+		"iat":  time.Now().UTC().Unix(),
+		"typ":  "JWT",
+		"exp":  time.Now().UTC().Add(j.TokenExpiry).Unix(),
+	})
 
 	// Create a signed token
 	signedAccessToken, err := token.SignedString([]byte(j.Secret))
@@ -61,13 +57,11 @@ func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 	}
 
 	// Create a refresh token and set the claims
-	refreshToken := jwt.New(jwt.SigningMethodHS256)
-	refreshTokenClaims := refreshToken.Claims.(jwt.MapClaims)
-	refreshTokenClaims["sub"] = fmt.Sprint(user.ID)
-	refreshTokenClaims["iat"] = time.Now().UTC().Unix()
-
-	// Set the expiry for the refresh token
-	refreshTokenClaims["exp"] = time.Now().UTC().Add(j.RefreshExpiry).Unix()
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": user.ID,
+		"iat": time.Now().UTC().Unix(),
+		"exp": time.Now().UTC().Add(j.RefreshExpiry).Unix(),
+	})
 
 	// Create a signed refresh token
 	signedRefreshToken, err := refreshToken.SignedString([]byte(j.Secret))
@@ -125,13 +119,9 @@ func (j *Auth) GetTokenFromHeaderAndVerify(w http.ResponseWriter, r *http.Reques
 	}
 
 	// split the header on spaces
-	headerParts := strings.Split(authHeader, " ")
-	if len(headerParts) != 2 {
-		return "", nil, errors.New("invalid auth header")
-	}
-
 	// check to see if we have a Bearer token
-	if headerParts[0] != "Bearer" {
+	headerParts := strings.Split(authHeader, " ")
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 		return "", nil, errors.New("invalid auth header")
 	}
 

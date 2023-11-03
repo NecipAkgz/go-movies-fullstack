@@ -169,6 +169,7 @@ func (app *application) GetMovie(w http.ResponseWriter, r *http.Request) {
 	_ = app.writeJSON(w, http.StatusOK, movie)
 }
 
+// Get ID param at url and update that movie
 func (app *application) MovieForEdit(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	movieId, err := strconv.Atoi(id)
@@ -219,7 +220,14 @@ func (app *application) InsertMovie(w http.ResponseWriter, r *http.Request) {
 	movie.CreatedAt = time.Now()
 	movie.UpdatedAt = time.Now()
 
+	newID, err := app.DB.InsertMovie(movie)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
 	// now handle genres
+	err = app.DB.UpdateMovieGenres(newID, movie.GenresArray)
 
 	resp := JSONResponse{
 		Error:   false,
