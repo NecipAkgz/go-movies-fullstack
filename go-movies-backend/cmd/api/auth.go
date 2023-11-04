@@ -42,7 +42,7 @@ func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 	// Create a token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"name": fmt.Sprintf("%s %s", user.FirstName, user.LastName),
-		"sub":  user.ID,
+		"sub":  fmt.Sprint(user.ID),
 		"aud":  j.Audience,
 		"iss":  j.Issuer,
 		"iat":  time.Now().UTC().Unix(),
@@ -58,7 +58,7 @@ func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 
 	// Create a refresh token and set the claims
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
+		"sub": fmt.Sprint(user.ID),
 		"iat": time.Now().UTC().Unix(),
 		"exp": time.Now().UTC().Add(j.RefreshExpiry).Unix(),
 	})

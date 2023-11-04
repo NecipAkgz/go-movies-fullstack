@@ -14,13 +14,19 @@ export default function ManageCatalogue() {
     }
 
     axios
-      .get(`api/admin/movies`, {
+      .get(`http://localhost:8000/admin/movies`, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
       })
       .then((response) => setMovies(response.data))
-      .catch((error) => console.error(error))
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.data)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+        }
+      })
   }, [jwtToken, navigate])
 
   return (
@@ -39,7 +45,7 @@ export default function ManageCatalogue() {
           {movies.map((m) => (
             <tr key={m.id}>
               <td>
-                <Link to={`/admin/movies/${m.id}`}>{m.title}</Link>
+                <Link to={`/admin/movie/${m.id}`}>{m.title}</Link>
               </td>
               <td>{m.relase_date}</td>
               <td>{m.mpaa_rating}</td>
