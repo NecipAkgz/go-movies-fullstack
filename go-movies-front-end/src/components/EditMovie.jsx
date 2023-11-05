@@ -199,6 +199,42 @@ export default function EditMovie() {
     setMovie({ ...movie, genres_array: tempIDs })
   }
 
+  const confirmDelete = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios({
+          method: 'delete',
+          url: `http://localhost:8000/admin/movies/${movie.id}`,
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        })
+          .then((response) => {
+            if (response.data.error) {
+              console.log(response.data.error)
+            } else {
+              navigate('/manage-catalogue')
+            }
+          })
+          .catch((error) => {
+            if (error.response) {
+              console.log(error.response.data)
+              console.log(error.response.status)
+            }
+          })
+      }
+    })
+  }
+
   if (error !== null) {
     return <div>Error : {error.message}</div>
   } else {
@@ -288,6 +324,15 @@ export default function EditMovie() {
           <hr />
 
           <button className='btn btn-primary'>Save</button>
+
+          {movie.id > 0 && (
+            <a
+              href='#!'
+              className='btn btn-danger ms-2'
+              onClick={confirmDelete}>
+              Delete Movie
+            </a>
+          )}
         </form>
       </div>
     )
