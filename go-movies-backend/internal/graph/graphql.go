@@ -7,6 +7,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+// Graph is the type for our graphql operations
 type Graph struct {
 	Movies      []*models.Movie
 	QueryString string
@@ -15,7 +16,9 @@ type Graph struct {
 	movieType   *graphql.Object
 }
 
+// New is the factory method to create a new instance of Graphql type
 func New(movies []*models.Movie) *Graph {
+	// Define the object for our movie, The fields match database field names.
 	var movieType = graphql.NewObject(
 		graphql.ObjectConfig{
 			Name: "Movie",
@@ -51,6 +54,7 @@ func New(movies []*models.Movie) *Graph {
 		},
 	)
 
+	// Define the query fields for our graphql operations
 	var fields = graphql.Fields{
 		"list": &graphql.Field{
 			Type:        graphql.NewList(movieType),
@@ -108,4 +112,21 @@ func New(movies []*models.Movie) *Graph {
 		fields:    fields,
 		movieType: movieType,
 	}
+}
+
+func (g *Graph) Query() (*graphql.Result, error) {
+	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: g.fields}
+	schemaConfig := graphql.SchemaConfig{Query: graphql.NewObject(rootQuery)}
+	schema, err := graphql.NewSchema(schemaConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	params := graphql.Params{Schema: schema, RequestString: g.QueryString}
+	resp := graphql.Do(params)
+	if len(resp.Errors) > 0 {
+		return nil, resp.Errors[0]
+	}
+
+	return resp, nil
 }

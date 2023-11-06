@@ -5,6 +5,7 @@ go 1.21.3
 require (
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/golang-jwt/jwt/v5 v5.0.0
+	github.com/graphql-go/graphql v0.8.1
 	github.com/jackc/pgconn v1.14.1
 	github.com/jackc/pgx/v4 v4.18.1
 	github.com/rs/cors v1.10.1
@@ -12,7 +13,6 @@ require (
 )
 
 require (
-	github.com/graphql-go/graphql v0.8.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
