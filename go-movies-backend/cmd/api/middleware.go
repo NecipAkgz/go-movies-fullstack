@@ -8,7 +8,7 @@ import (
 // enableCORS enables CORS for all requests
 func (app *application) enableCORS(h http.Handler) http.Handler {
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedOrigins:   []string{"https:*", "http:*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Content-Type", "X-CSRF-Token", "Authorization", "Set-Cookie"},
 		AllowCredentials: true,

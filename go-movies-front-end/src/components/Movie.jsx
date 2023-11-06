@@ -8,7 +8,7 @@ export default function Movie() {
 
   useEffect(() => {
     axios
-      .get(`/api/movies/${id}`)
+      .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/movies/${id}`)
       .then((response) => {
         setMovie(response.data)
       })

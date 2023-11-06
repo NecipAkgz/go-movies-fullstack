@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import Input from '../components/form/Input'
+import Input from './form/input'
 
 export default function GraphQL() {
   // set up stateful variables
@@ -23,7 +23,7 @@ export default function GraphQL() {
       }
     `
     axios
-      .post(`api/graph`, payload)
+      .post(`${import.meta.env.VITE_REACT_APP_BACKEND}/graph`, payload)
       .then((response) => {
         let theList = response.data.data.search
         setMovies(theList)
@@ -60,7 +60,7 @@ export default function GraphQL() {
     `
 
     axios
-      .post(`api/graph`, payload)
+      .post(`${import.meta.env.VITE_REACT_APP_BACKEND}/graph`, payload)
       .then((response) => {
         let theList = response.data.data.list
         setMovies(theList)

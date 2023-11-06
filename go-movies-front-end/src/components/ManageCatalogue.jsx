@@ -14,7 +14,7 @@ export default function ManageCatalogue() {
     }
 
     axios
-      .get(`http://localhost:8000/admin/movies`, {
+      .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/admin/movies`, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },

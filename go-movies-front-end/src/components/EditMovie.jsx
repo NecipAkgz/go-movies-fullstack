@@ -63,7 +63,7 @@ export default function EditMovie() {
         genres_array: [Array(13).fill(false)],
       })
       axios
-        .get(`/api/genres`)
+        .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/genres`)
         .then((response) => {
           const checks = []
           response.data.forEach((g) => {
@@ -80,7 +80,7 @@ export default function EditMovie() {
     } else {
       // editing an existing movie
       axios
-        .get(`http://localhost:8000/admin/movies/${id}`, {
+        .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/admin/movies/${id}`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
@@ -157,7 +157,7 @@ export default function EditMovie() {
 
     axios({
       method: movie.id > 0 ? 'patch' : 'put',
-      url: `http://localhost:8000/admin/movies/${movie.id}`,
+      url: `${import.meta.env.VITE_REACT_APP_BACKEND}/admin/movies/${movie.id}`,
       data: JSON.stringify(requestBody),
       withCredentials: true,
       headers: {
@@ -212,7 +212,9 @@ export default function EditMovie() {
       if (result.isConfirmed) {
         axios({
           method: 'delete',
-          url: `http://localhost:8000/admin/movies/${movie.id}`,
+          url: `${import.meta.env.VITE_REACT_APP_BACKEND}/admin/movies/${
+            movie.id
+          }`,
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${jwtToken}`,

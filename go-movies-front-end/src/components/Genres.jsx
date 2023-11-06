@@ -8,7 +8,7 @@ export default function Genres() {
 
   useEffect(() => {
     axios
-      .get('api/genres')
+      .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/genres`)
       .then((res) => {
         if (res.data.error) {
           setError(res.data.error.message)

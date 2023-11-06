@@ -23,7 +23,7 @@ export default function Login() {
     }
 
     axios
-      .post(`api/authenticate`, payload, {
+      .post(`${import.meta.env.VITE_REACT_APP_BACKEND}/authenticate`, payload, {
         withCredentials: true,
       })
       .then((response) => {

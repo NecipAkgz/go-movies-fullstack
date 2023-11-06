@@ -14,7 +14,7 @@ export default function App() {
 
   const logOut = () => {
     axios
-      .get('api/logout', {
+      .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/logout`, {
         withCredentials: true,
       })
       .catch((error) => console.log('error logging out', error))
@@ -30,7 +30,7 @@ export default function App() {
       if (status) {
         let i = setInterval(() => {
           axios
-            .get(`api/refresh`, {
+            .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/refresh`, {
               withCredentials: true,
             })
             .then((response) => {
@@ -52,9 +52,11 @@ export default function App() {
   )
 
   useEffect(() => {
+    console.log(import.meta.env.VITE_REACT_APP_BACKEND)
+
     if (jwtToken === '') {
       axios
-        .get(`api/refresh`, {
+        .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/refresh`, {
           withCredentials: true,
         })
         .then((response) => {

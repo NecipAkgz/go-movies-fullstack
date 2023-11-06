@@ -12,7 +12,7 @@ export const OneGenre = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/movies/genres/${id}`)
+      .get(`${import.meta.env.VITE_REACT_APP_BACKEND}/movies/genres/${id}`)
       .then((res) => {
         setMovies(res.data)
       })
